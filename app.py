@@ -13,6 +13,17 @@ app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 def index():
     session.clear()
     if request.method == "POST":
+        # Get the form submission for the job description
+        
+        # Validate the inputs
+
+        # Load the master resume
+
+        # Send the master resume and job description to chat gpt and get the response text
+
+        # Make sure chatgpt output is valid and not incorrect
+
+        # Render the resume shown
         print("POST REQUEST")
     
     else:
