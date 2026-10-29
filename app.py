@@ -16,10 +16,14 @@ class TailoredCoursework(BaseModel):
     uts: list[str]
     cs50: list[str]
 
+class SkillCategory(BaseModel):
+    category: str
+    skills: list[str]
+
 class TailoredResume(BaseModel):
     about_me: list[str]
     coursework: TailoredCoursework
-    skills: list[str]
+    skills: list[SkillCategory]
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -69,8 +73,11 @@ def index():
         )
         
         # Make sure chatgpt output is valid and not incorrect with its structure
+        
         invalid_skills = [
-            skill for skill in tailored_data.skills
+            skill
+            for category in tailored_data.skills
+            for skill in category.skills
             if skill not in skills
         ]
 
@@ -127,6 +134,31 @@ def ai_call(client, job_description, about_me, education, skills):
     7. Preserve factual details such as dates, qualifications
     and employment history.
     8. Return the tailored resume as valid JSON.
+
+    Select relevant skills from the master resume and group them
+    into professional categories such as Programming Languages,
+    Artificial Intelligence, Data Analytics, Database Management,
+    Software Development, Web Development, Development Tools
+    and Technical Support.
+
+    Only include categories relevant to the job description.
+    Use only skills present in the master resume.
+    Do not duplicate skills unnecessarily.
+
+        ABOUT ME SECTION:
+    - Rewrite the About Me section to be relevant to the job description,
+    while maintaining a general professional tone.
+    - Avoid making the summary overly specific to the advertised position.
+    It should describe the candidate's overall qualifications, experience,
+    technical abilities and professional qualities.
+    - Emphasise transferable skills and relevant strengths rather than
+    directly mirroring the job description.
+    - Maintain approximately the same total word count as the original
+    About Me section (within 5%).
+    - Preserve the original number of paragraphs and their general structure.
+    - Use clear, natural and professional language.
+    - Do not invent qualifications, experience, achievements or skills.
+    - Avoid mentioning the employer's name or the specific job title just say the general title as advertised.
     """
 
     resume_input = {

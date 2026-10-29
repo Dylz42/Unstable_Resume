@@ -2,24 +2,101 @@
     <h2>EDUCATION</h2>
 
     {% for entry in resume.education %}
+    <div class="education-entry">
 
-        <div class="education-entry">
-
-            {% for key, value in entry.items() %}
-
-                <p>
-                    <strong>{{ key | replace("_", " ") | title }}:</strong>
-
-                    {% if value is sequence and value is not string %}
-                        {{ value | join(", ") }}
-                    {% else %}
-                        {{ value }}
-                    {% endif %}
-                </p>
-
-            {% endfor %}
-
+        <!-- Qualification -->
+        <div class="education-heading">
+            <strong class="education-title">
+                {{ entry.qualification }}
+            </strong>
         </div>
 
+        <!-- Institution -->
+        {% if entry.institution %}
+            <p class="education-institution">
+                {{ entry.institution }}
+            </p>
+        {% endif %}
+
+        <!-- University dates or certification status -->
+        {% if entry.status %}
+            <p class="education-status">
+                {{ entry.status }}
+            </p>
+        {% endif %}
+
+         <!-- Major -->
+        {% if entry.major %}
+            <p class="education-majors">
+                {{ entry.major }}
+            </p>
+        {% endif %}
+
+        <!-- First Class Honours -->
+        {% if entry.honours %}
+            <div class="education-highlights">
+                <span class="honours-label">
+                    {{ entry.honours }}
+                </span>
+            </div>
+        {% endif %}
+
+       
+
+        <!-- Academic details -->
+        <ul class="education-details">
+
+            {% if entry.gpa is defined or entry.wam is defined %}
+                <li>
+                    {% if entry.gpa is defined %}
+                        <strong>GPA:</strong> {{ entry.gpa }}
+                    {% endif %}
+
+                    {% if entry.gpa is defined and entry.wam is defined %}
+                        |
+                    {% endif %}
+
+                    {% if entry.wam is defined %}
+                        <strong>WAM:</strong> {{ entry.wam }}
+                    {% endif %}
+                </li>
+            {% endif %}
+
+            <!-- Academic Transcript -->
+            {% if entry.transcript %}
+                <li>
+                    <strong>Academic Transcript:</strong>
+                    <a href="{{ entry.transcript }}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        View Transcript
+                    </a>
+                </li>
+            {% endif %}
+
+            <!-- Certificate -->
+            {% if entry.certificate %}
+                <li>
+                    <strong>Certificate:</strong>
+                    <a href="{{ entry.certificate }}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        View Certificate
+                    </a>
+                </li>
+            {% endif %}
+
+            <!-- Relevant Coursework -->
+            {% if entry.coursework %}
+                <li>
+                    <strong>Relevant Coursework:</strong>
+                    {{ entry.coursework[:10] | join(", ") }}
+                </li>
+            {% endif %}
+
+        </ul>
+
+    </div>
     {% endfor %}
+
 </section>

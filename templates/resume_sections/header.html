@@ -1,36 +1,57 @@
 <header class="resume-header">
 
-    {% for key, value in resume.personal.items() %}
+    <!-- Name -->
+    <h1>{{ resume.personal.name }}</h1>
 
-        {% if key == "name" %}
+    <!-- Contact Information -->
+    <div class="contact">
 
-            <h1>{{ value }}</h1>
-
-        {% elif value %}
-
-            <p>
-                <strong>{{ key | replace("_", " ") | title }}:</strong>
-
-                {% if value is string and
-                      (value.startswith("https://") or value.startswith("http://")) %}
-
-                    <a href="{{ value }}" target="_blank" rel="noopener noreferrer">
-                        {{ value }}
-                    </a>
-
-                {% elif key == "email" %}
-
-                    <a href="mailto:{{ value }}">{{ value }}</a>
-
-                {% else %}
-
-                    {{ value }}
-
-                {% endif %}
-            </p>
-
+        {% if resume.personal.phone %}
+            <span>{{ resume.personal.phone }}</span>
         {% endif %}
 
-    {% endfor %}
+        {% if resume.personal.email %}
+            <span>
+                |
+                <a href="mailto:{{ resume.personal.email }}">
+                    {{ resume.personal.email }}
+                </a>
+            </span>
+        {% endif %}
+
+        {% if resume.personal.location %}
+            <span>| {{ resume.personal.location }}</span>
+        {% endif %}
+
+    </div>
+
+    <!-- Profile Links -->
+    <div class="links">
+
+        {% if resume.personal.github %}
+            <span>
+                GitHub:
+                <a href="{{ resume.personal.github }}"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    {{ resume.personal.github | replace("https://", "") }}
+                </a>
+            </span>
+        {% endif %}
+
+        {% if resume.personal.linkedin %}
+            <span>
+                |
+                LinkedIn:
+                <a href="{{ resume.personal.linkedin }}"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    {{ resume.personal.linkedin | replace("https://", "") }}
+                </a>
+            </span>
+        {% endif %}
+
+    </div>
 
 </header>
+

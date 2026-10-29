@@ -1,19 +1,18 @@
 
+
 <section class="skills-section">
     <h2>TECHNICAL SKILLS</h2>
 
     {% if resume.skills %}
-
         <ul class="skills-list">
 
-            {% for skill in resume.skills %}
-
-                <li>{{ skill }}</li>
-
+            {% for category in resume.skills %}
+                <li>
+                    <strong>{{ category.category }}:</strong>
+                    {{ category.skills | join(", ") }}
+                </li>
             {% endfor %}
 
         </ul>
-
     {% endif %}
-
 </section>

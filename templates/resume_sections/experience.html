@@ -1,37 +1,47 @@
+
+<!-- EXPERIENCE SECTION -->
+
 <section class="experience-section">
-    <h2>WORK EXPERIENCE</h2>
+    <h2>EXPERIENCE</h2>
 
     {% for entry in resume.experience %}
 
         <div class="experience-entry">
 
-            {% for key, value in entry.items() %}
+            <!-- Job title, company and duration -->
+            <div class="experience-heading">
 
-                {% if value is sequence and value is not string %}
+                <strong>
+                    {{ entry.title }}
 
-                    <div class="experience-field">
-                        <strong>{{ key | replace("_", " ") | title }}:</strong>
+                    {% if entry.company %}
+                        | {{ entry.company }}
+                    {% endif %}
 
-                        <ul>
-                            {% for item in value %}
-                                <li>{{ item }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+                    {% if entry.location %}
+                        , {{ entry.location }}
+                    {% endif %}
+                </strong>
 
-                {% else %}
-
-                    <p>
-                        <strong>{{ key | replace("_", " ") | title }}:</strong>
-                        {{ value }}
-                    </p>
-
+                {% if entry.start_date %}
+                    <span class="experience-date">
+                        {{ entry.start_date }} -
+                        {{ entry.end_date | default("Present", true) }}
+                    </span>
                 {% endif %}
 
-            {% endfor %}
+            </div>
+
+            <!-- Achievements -->
+            {% if entry.achievements %}
+                <ul class="experience-achievements">
+                    {% for achievement in entry.achievements %}
+                        <li>{{ achievement }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
 
         </div>
 
     {% endfor %}
-
 </section>

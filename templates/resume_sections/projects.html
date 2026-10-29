@@ -5,73 +5,71 @@
 
         <div class="project-entry">
 
-            {% for key, value in project.items() %}
+            <!-- Project heading and date -->
+            <div class="project-heading">
 
-                {% if value is sequence and value is not string and value is not mapping %}
+                <strong class="project-title">
+                    {{ project.name }}
 
-                    <div class="project-field">
-                        <strong>{{ key | replace("_", " ") | title }}:</strong>
+                    {% if project.type %}
+                        | {{ project.type }}
+                    {% endif %}
+                </strong>
 
-                        <ul>
-                            {% for item in value %}
-
-                                {% if item is mapping %}
-
-                                    <li>
-                                        {% for item_key, item_value in item.items() %}
-                                            <strong>{{ item_key | replace("_", " ") | title }}:</strong>
-                                            {{ item_value }}
-                                        {% endfor %}
-                                    </li>
-
-                                {% else %}
-
-                                    <li>{{ item }}</li>
-
-                                {% endif %}
-
-                            {% endfor %}
-                        </ul>
-                    </div>
-
-                {% elif value is mapping %}
-
-                    <div class="project-field">
-                        <strong>{{ key | replace("_", " ") | title }}:</strong>
-
-                        {% for item_key, item_value in value.items() %}
-                            <p>
-                                <strong>{{ item_key | replace("_", " ") | title }}:</strong>
-                                {{ item_value }}
-                            </p>
-                        {% endfor %}
-                    </div>
-
-                {% elif value %}
-
-                    <p>
-                        <strong>{{ key | replace("_", " ") | title }}:</strong>
-
-                        {% if value is string and
-                              (value.startswith("https://") or value.startswith("http://")) %}
-
-                            <a href="{{ value }}" target="_blank" rel="noopener noreferrer">
-                                {{ value }}
-                            </a>
-
-                        {% else %}
-
-                            {{ value }}
-
-                        {% endif %}
-                    </p>
-
+                {% if project.date %}
+                    <span class="project-date">
+                        {{ project.date }}
+                    </span>
                 {% endif %}
 
-            {% endfor %}
+            </div>
+
+            <!-- GitHub link -->
+            {% if project.github %}
+                <p class="project-link">
+                    <a href="{{ project.github }}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        {{ project.github | replace("https://", "") }}
+                    </a>
+                </p>
+            {% endif %}
+
+            <!-- Project details -->
+            <ul class="project-details">
+
+                {% if project.summary %}
+                    <li>
+                        <strong>Summary:</strong>
+                        {{ project.summary }}
+                    </li>
+                {% endif %}
+
+                {% if project.features %}
+                    <li>
+                        <strong>Key Features:</strong>
+
+                        <ul class="project-features">
+                            {% for feature in project.features %}
+                                <li>
+                                    <strong>{{ feature.title }}:</strong>
+                                    {{ feature.description }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+
+                {% if project.skills %}
+                    <li>
+                        <strong>Applied Knowledge:</strong>
+                        {{ project.skills | join(", ") }}
+                    </li>
+                {% endif %}
+
+            </ul>
 
         </div>
 
     {% endfor %}
-
 </section>
