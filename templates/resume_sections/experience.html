@@ -1,0 +1,37 @@
+<section class="experience-section">
+    <h2>WORK EXPERIENCE</h2>
+
+    {% for entry in resume.experience %}
+
+        <div class="experience-entry">
+
+            {% for key, value in entry.items() %}
+
+                {% if value is sequence and value is not string %}
+
+                    <div class="experience-field">
+                        <strong>{{ key | replace("_", " ") | title }}:</strong>
+
+                        <ul>
+                            {% for item in value %}
+                                <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                {% else %}
+
+                    <p>
+                        <strong>{{ key | replace("_", " ") | title }}:</strong>
+                        {{ value }}
+                    </p>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    {% endfor %}
+
+</section>

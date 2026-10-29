@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<form method="post" class="index">
+    <h1> Tailor Your Resume Information!</h1>
+
+    <div class="description">
+
+        <textarea name="description" id="description" placeholder="Past the job description here..." 
+        rows="12" required></textarea>
+        <button type="submit" name="job" class="job-btn">Submit Job Description</button>
+
+    </div>
+
+</form>
+{% endblock %}

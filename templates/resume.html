@@ -1,0 +1,31 @@
+{% extends "resume_layout.html" %}
+
+{% block content %}
+
+<main>
+    <!-- PAGE 1 -->
+    <section class="page">
+
+        {% include "resume_sections/header.html" %}
+
+        {% include "resume_sections/about.html" %}
+
+        {% include "resume_sections/experience.html" %}
+
+        {% include "resume_sections/projects.html" %}
+
+    </section>
+
+    <!-- PAGE 2 -->
+    <section class="page page-break">
+
+        {% include "resume_sections/education.html" %}
+
+        {% include "resume_sections/skills.html" %}
+
+        {% include "resume_sections/references.html" %}
+
+    </section>
+</main>
+
+{% endblock %}

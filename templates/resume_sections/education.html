@@ -1,0 +1,25 @@
+<section class="education-section">
+    <h2>EDUCATION</h2>
+
+    {% for entry in resume.education %}
+
+        <div class="education-entry">
+
+            {% for key, value in entry.items() %}
+
+                <p>
+                    <strong>{{ key | replace("_", " ") | title }}:</strong>
+
+                    {% if value is sequence and value is not string %}
+                        {{ value | join(", ") }}
+                    {% else %}
+                        {{ value }}
+                    {% endif %}
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    {% endfor %}
+</section>

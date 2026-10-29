@@ -1,0 +1,36 @@
+<header class="resume-header">
+
+    {% for key, value in resume.personal.items() %}
+
+        {% if key == "name" %}
+
+            <h1>{{ value }}</h1>
+
+        {% elif value %}
+
+            <p>
+                <strong>{{ key | replace("_", " ") | title }}:</strong>
+
+                {% if value is string and
+                      (value.startswith("https://") or value.startswith("http://")) %}
+
+                    <a href="{{ value }}" target="_blank" rel="noopener noreferrer">
+                        {{ value }}
+                    </a>
+
+                {% elif key == "email" %}
+
+                    <a href="mailto:{{ value }}">{{ value }}</a>
+
+                {% else %}
+
+                    {{ value }}
+
+                {% endif %}
+            </p>
+
+        {% endif %}
+
+    {% endfor %}
+
+</header>
