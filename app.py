@@ -1,5 +1,6 @@
 import os
 import json
+import copy
 from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
@@ -12,9 +13,9 @@ client = OpenAI(api_key = os.environ["API_KEY"])
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 
-class TailoredCoursework(BaseModel):
-    uts: list[str]
-    cs50: list[str]
+class TailoredEducation(BaseModel):
+    education_index: int
+    coursework: list[str]
 
 class SkillCategory(BaseModel):
     category: str
@@ -22,7 +23,7 @@ class SkillCategory(BaseModel):
 
 class TailoredResume(BaseModel):
     about_me: list[str]
-    coursework: TailoredCoursework
+    education: list[TailoredEducation]
     skills: list[SkillCategory]
 
 
@@ -73,27 +74,39 @@ def index():
         )
         
         # Make sure chatgpt output is valid and not incorrect with its structure
-        
-        invalid_skills = [
-            skill
-            for category in tailored_data.skills
-            for skill in category.skills
-            if skill not in skills
+        tailored_education = copy.deepcopy(education)
+
+        returned_indices = [
+            entry.education_index
+            for entry in tailored_data.education
         ]
 
-        if invalid_skills:
-            raise ValueError(f"Invalid skills: {invalid_skills}")
+        expected_indices = list(range(len(education)))
 
-        uts_coursework = education[0]["coursework"]
-        cs50_coursework = education[1]["coursework"]
+        if sorted(returned_indices) != expected_indices:
+            flash("OpenAI returned coursework listed duplicate entries, try again")
+            return redirect(url_for("index"))
 
-        for subject in tailored_data.coursework.uts:
-            if subject not in uts_coursework:
-                raise ValueError(f"Invalid UTS subject: {subject}")
+        for entry in tailored_data.education:
+            index = entry.education_index
 
-        for subject in tailored_data.coursework.cs50:
-            if subject not in cs50_coursework:
-                raise ValueError(f"Invalid CS50 subject: {subject}")
+            if not 0 <= index < len(tailored_education):
+                raise ValueError(f"Invalid education index: {index}")
+            
+            original_coursework = education[index].get("coursework",[])
+
+            invalid_coursework = [
+                subject
+                for subject in entry.coursework
+                if subject not in original_coursework
+            ]
+
+            if invalid_coursework:
+                flash("OpenAI returned coursework not listed in master resume, try again")
+                return redirect(url_for("index"))
+
+            tailored_education[index]["coursework"] = entry.coursework
+
         
         tailored_resume = {
         "personal": header_data,
@@ -154,11 +167,22 @@ def ai_call(client, job_description, about_me, education, skills):
     - Emphasise transferable skills and relevant strengths rather than
     directly mirroring the job description.
     - Maintain approximately the same total word count as the original
-    About Me section (within 5%).
+    About Me section (within 3%).
     - Preserve the original number of paragraphs and their general structure.
     - Use clear, natural and professional language.
     - Do not invent qualifications, experience, achievements or skills.
     - Avoid mentioning the employer's name or the specific job title just say the general title as advertised.
+
+        EDUCATION AND COURSEWORK:
+    - Process every education entry in the master resume.
+    - Use education_index to identify each entry by its
+    zero-based position in the education array.
+    - Return exactly one result for each education entry.
+    - Select up to 10 relevant coursework subjects per entry.
+    - Rank subjects from most relevant to least relevant.
+    - Only select subjects from that entry's original coursework.
+    - Preserve the exact original subject names.
+    - Do not invent qualifications or coursework.
     """
 
     resume_input = {
