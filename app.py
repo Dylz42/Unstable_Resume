@@ -5,7 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel
-from flask import Flask, render_template, request, session, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash
 
 load_dotenv()
 client = OpenAI(api_key = os.environ["API_KEY"])
@@ -14,14 +14,17 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ["SECRET_KEY"]
 
 class TailoredEducation(BaseModel):
+    """A structure for the education elements for the AI model"""
     education_index: int
     coursework: list[str]
 
 class SkillCategory(BaseModel):
+    """A structure for the skill elements for the AI model"""
     category: str
     skills: list[str]
 
 class TailoredResume(BaseModel):
+    """A structure for the resume for the AI model"""
     about_me: list[str]
     education: list[TailoredEducation]
     skills: list[SkillCategory]
@@ -29,7 +32,7 @@ class TailoredResume(BaseModel):
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    session.clear()
+    """Index route for the web application"""
     if request.method == "POST":
         # Get the form submission for the job description
         job_description = request.form.get("description", "").strip()
@@ -70,7 +73,7 @@ def index():
 
         # Send the master resume and job description to chat gpt and get the response text
         tailored_data = ai_call(
-            client, job_description, about_me, education, skills
+            job_description, about_me, education, skills
         )
         
         # Make sure chatgpt output is valid and not incorrect with its structure
@@ -106,8 +109,7 @@ def index():
                 return redirect(url_for("index"))
 
             tailored_education[index]["coursework"] = entry.coursework
-
-        
+    
         tailored_resume = {
         "personal": header_data,
         "about": {
@@ -115,7 +117,7 @@ def index():
         },
         "experience": experience,
         "projects": projects,
-        "education": education,
+        "education": tailored_education,
         "skills": tailored_data.skills,
         "references": references
     }
@@ -129,7 +131,8 @@ def index():
         return render_template("index.html")
 
 
-def ai_call(client, job_description, about_me, education, skills):
+def ai_call(job_description, about_me, education, skills):
+    """Uses pydantic and openai to return a structured call for the open ai model"""
 
     instructions = """
     You are a professional resume tailoring assistant.
@@ -178,8 +181,8 @@ def ai_call(client, job_description, about_me, education, skills):
     - Use education_index to identify each entry by its
     zero-based position in the education array.
     - Return exactly one result for each education entry.
-    - Select up to 10 relevant coursework subjects per entry.
     - Rank subjects from most relevant to least relevant.
+    - Select up to 10 most relevant coursework subjects per entry.
     - Only select subjects from that entry's original coursework.
     - Preserve the exact original subject names.
     - Do not invent qualifications or coursework.
@@ -192,7 +195,7 @@ def ai_call(client, job_description, about_me, education, skills):
     }
 
     response = client.responses.parse(
-        model="gpt-5-mini",
+        model="gpt-6-luna",
         instructions=instructions,
         input=[
             {
